@@ -1,8 +1,8 @@
-import '../styles/globals.css';
+import "../styles/globals.css";
 
 export const metadata = {
-  title: 'Globetrotter',
-  description: 'Reserva de viajes moderna y minimalista',
+  title: "Globetrotter - Mickel Arroz",
+  description: "Reserva de viajes moderna y minimalista",
 };
 
 export default function RootLayout({
