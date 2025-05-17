@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { fetchFlights } from "@/lib/api";
-import type { Flight } from "@/types";
+import type { Flight, FlightFormProps } from "@/types";
 
-export default function FlightForm() {
+export default function FlightForm({
+  destination,
+  departureDate,
+  returnDate,
+  flightClass,
+  onChange,
+}: FlightFormProps) {
   const [flights, setFlights] = useState<Flight[]>([]);
-  const [destination, setDestination] = useState("");
-  const [departureDate, setDepartureDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
-  const [flightClass, setFlightClass] = useState("");
 
   useEffect(() => {
     fetchFlights().then(setFlights).catch(console.error);
@@ -32,7 +34,7 @@ export default function FlightForm() {
           list="destinos"
           className={inputClass}
           value={destination}
-          onChange={(e) => setDestination(e.target.value)}
+          onChange={(e) => onChange("destination", e.target.value)}
           placeholder="Escribe o selecciona un destino"
         />
         <datalist id="destinos">
@@ -53,7 +55,7 @@ export default function FlightForm() {
           type="date"
           className={inputClass}
           value={departureDate}
-          onChange={(e) => setDepartureDate(e.target.value)}
+          onChange={(e) => onChange("departureDate", e.target.value)}
         />
       </div>
 
@@ -65,7 +67,7 @@ export default function FlightForm() {
           type="date"
           className={inputClass}
           value={returnDate}
-          onChange={(e) => setReturnDate(e.target.value)}
+          onChange={(e) => onChange("returnDate", e.target.value)}
         />
       </div>
 
@@ -76,7 +78,7 @@ export default function FlightForm() {
         <select
           className={inputClass}
           value={flightClass}
-          onChange={(e) => setFlightClass(e.target.value)}
+          onChange={(e) => onChange("flightClass", e.target.value)}
         >
           <option value="">Selecciona una clase</option>
           {uniqueClasses.map((cls, i) => (

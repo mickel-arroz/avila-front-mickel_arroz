@@ -4,3 +4,53 @@ export interface Flight {
   class: "Económica" | "Ejecutiva" | "Primera";
   price: number;
 }
+
+export interface FlightData {
+  destination: string;
+  departureDate: string;
+  returnDate: string;
+  flightClass: string;
+}
+
+export interface FlightFormProps {
+  destination: string;
+  departureDate: string;
+  returnDate: string;
+  flightClass: string;
+  onChange: (field: keyof FlightData, value: string) => void;
+}
+
+export interface TravelerFormData {
+  numTravelers: number;
+  travelers: {
+    fullName: string;
+    birthDate: string;
+    idType: string;
+    idNumber: string;
+  }[];
+  hasPets: boolean;
+  petCount: number;
+  hasExtraLuggage: boolean;
+  extraLuggageCount: number;
+}
+
+export interface TravelerFormProps {
+  formData: TravelerFormData;
+  setFormData: React.Dispatch<React.SetStateAction<TravelerFormData>>;
+}
+
+export interface Traveler {
+  fullName: string;
+  birthDate: string;
+  idType: string;
+  idNumber: string;
+}
+
+export interface TravelInfo {
+  numTravelers: number;
+  travelers: Traveler[];
+  hasPets: boolean;
+  petCount: number;
+  hasExtraBags: boolean;
+  extraBagsCount: number;
+}
