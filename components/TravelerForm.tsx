@@ -3,13 +3,23 @@
 import { TravelerFormProps } from "@/types";
 import { ChangeEvent } from "react";
 
-const inputStyle =
-  "w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition";
-
 export default function TravelerForm({
   formData,
   setFormData,
-}: TravelerFormProps) {
+  fieldErrors,
+}: TravelerFormProps & {
+  fieldErrors?: Record<
+    number,
+    Partial<Record<"fullName" | "birthDate" | "idType" | "idNumber", string>>
+  >;
+}) {
+  const getInputClasses = (hasError?: boolean) =>
+    `w-full border rounded-md px-4 py-2 focus:outline-none transition ${
+      hasError
+        ? "border-red-500 focus:ring-2 focus:ring-red-300"
+        : "border-gray-300 focus:ring-2 focus:ring-indigo-500"
+    }`;
+
   const handleTravelerChange = (
     index: number,
     field: "fullName" | "birthDate" | "idType" | "idNumber",
@@ -23,7 +33,7 @@ export default function TravelerForm({
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    const target = e.target;
     const { name, value, type } = target;
     const checked = (target as HTMLInputElement).checked;
 
@@ -66,7 +76,7 @@ export default function TravelerForm({
           name="numTravelers"
           min={1}
           max={10}
-          className={inputStyle}
+          className={getInputClasses()}
           value={formData.numTravelers}
           onChange={handleChange}
         />
@@ -78,65 +88,102 @@ export default function TravelerForm({
           className="p-4 border border-gray-200 rounded-lg space-y-4 bg-white/60"
         >
           <h3 className="font-semibold text-indigo-600">Viajero {i + 1}</h3>
+
+          {/* Nombre completo */}
           <div>
             <label className="block text-sm mb-1 text-gray-700">
               Nombre completo
             </label>
             <input
               type="text"
-              className={inputStyle}
+              className={getInputClasses(
+                fieldErrors?.[i]?.fullName !== undefined
+              )}
               value={traveler.fullName}
               onChange={(e) =>
                 handleTravelerChange(i, "fullName", e.target.value)
               }
             />
+            {fieldErrors?.[i]?.fullName && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors[i].fullName}
+              </p>
+            )}
           </div>
+
+          {/* Fecha de nacimiento */}
           <div>
             <label className="block text-sm mb-1 text-gray-700">
               Fecha de nacimiento
             </label>
             <input
               type="date"
-              className={inputStyle}
+              className={getInputClasses(
+                fieldErrors?.[i]?.birthDate !== undefined
+              )}
               value={traveler.birthDate}
               onChange={(e) =>
                 handleTravelerChange(i, "birthDate", e.target.value)
               }
             />
+            {fieldErrors?.[i]?.birthDate && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors[i].birthDate}
+              </p>
+            )}
           </div>
+
+          {/* Tipo y número de documento */}
           <div className="flex gap-2">
             <div className="w-1/3">
               <label className="block text-sm mb-1 text-gray-700">
                 Tipo de documento
               </label>
               <select
-                className={inputStyle}
+                className={getInputClasses(
+                  fieldErrors?.[i]?.idType !== undefined
+                )}
                 value={traveler.idType}
                 onChange={(e) =>
                   handleTravelerChange(i, "idType", e.target.value)
                 }
               >
+                <option value="">Seleccione</option>
                 <option value="Cédula">Cédula</option>
                 <option value="Pasaporte">Pasaporte</option>
               </select>
+              {fieldErrors?.[i]?.idType && (
+                <p className="text-sm text-red-600 mt-1">
+                  {fieldErrors[i].idType}
+                </p>
+              )}
             </div>
+
             <div className="w-2/3">
               <label className="block text-sm mb-1 text-gray-700">
                 Número de documento
               </label>
               <input
                 type="text"
-                className={inputStyle}
+                className={getInputClasses(
+                  fieldErrors?.[i]?.idNumber !== undefined
+                )}
                 value={traveler.idNumber}
                 onChange={(e) =>
                   handleTravelerChange(i, "idNumber", e.target.value)
                 }
               />
+              {fieldErrors?.[i]?.idNumber && (
+                <p className="text-sm text-red-600 mt-1">
+                  {fieldErrors[i].idNumber}
+                </p>
+              )}
             </div>
           </div>
         </div>
       ))}
 
+      {/* Sección mascotas */}
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">
@@ -173,7 +220,7 @@ export default function TravelerForm({
                 type="number"
                 name="petCount"
                 min={1}
-                className={inputStyle}
+                className={getInputClasses()}
                 value={formData.petCount}
                 onChange={handleChange}
               />
@@ -182,6 +229,7 @@ export default function TravelerForm({
           )}
         </div>
 
+        {/* Sección maletas */}
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">
             ¿Necesitas maletas extra?
@@ -223,7 +271,7 @@ export default function TravelerForm({
                 type="number"
                 name="extraLuggageCount"
                 min={1}
-                className={inputStyle}
+                className={getInputClasses()}
                 value={formData.extraLuggageCount}
                 onChange={handleChange}
               />

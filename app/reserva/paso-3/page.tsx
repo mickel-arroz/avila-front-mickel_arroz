@@ -35,6 +35,10 @@ export default function Paso3() {
     }
   }, [router]);
 
+  useEffect(() => {
+    sessionStorage.removeItem("servicesAdditionalData");
+  }, []);
+
   const handleSave = () => {
     setFormError("");
 
@@ -50,8 +54,7 @@ export default function Paso3() {
     }
 
     sessionStorage.setItem("servicesAdditionalData", JSON.stringify(formData));
-    alert("Datos guardados correctamente.");
-    // router.push("/reserva/paso-4");
+    router.push("/reserva/paso-4");
   };
 
   return (
@@ -59,7 +62,7 @@ export default function Paso3() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center px-6 py-12 overflow-hidden"
+      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center overflow-hidden"
     >
       <div
         aria-hidden="true"

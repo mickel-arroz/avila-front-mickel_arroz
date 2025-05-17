@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import FlightForm from "@/components/FlightForm";
 import { motion } from "framer-motion";
-import type { FlightData } from "@/types";
+import type { Flight, FlightData } from "@/types";
 import { useRouter } from "next/navigation";
 
 export default function Paso1() {
@@ -12,11 +12,17 @@ export default function Paso1() {
     departureDate: "",
     returnDate: "",
     flightClass: "",
+    priceUSD: 0,
   });
 
   const router = useRouter();
 
   const [dateError, setDateError] = useState("");
+  const [availableFlights, setAvailableFlights] = useState<Flight[]>([]);
+
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof FlightData, string>>
+  >({});
 
   useEffect(() => {
     sessionStorage.removeItem("flightData");
@@ -26,27 +32,52 @@ export default function Paso1() {
     setFlightData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const isFormValid = Object.values(flightData).every(
-    (val) => val.trim() !== ""
-  );
+  const isFormValid =
+    flightData.destination.trim() !== "" &&
+    flightData.departureDate.trim() !== "" &&
+    flightData.returnDate.trim() !== "" &&
+    flightData.flightClass.trim() !== "";
 
   const handleSave = () => {
     setDateError("");
-    if (!isFormValid) return;
+    const errors: Partial<Record<keyof FlightData, string>> = {};
+
+    if (!flightData.destination.trim())
+      errors.destination = "El destino es obligatorio.";
+    if (!flightData.departureDate.trim())
+      errors.departureDate = "La fecha de salida es obligatoria.";
+    if (!flightData.returnDate.trim())
+      errors.returnDate = "La fecha de regreso es obligatoria.";
+    if (!flightData.flightClass.trim())
+      errors.flightClass = "La clase de vuelo es obligatoria.";
 
     const dep = new Date(flightData.departureDate);
     const ret = new Date(flightData.returnDate);
 
-    if (ret < dep) {
-      setDateError("La fecha de regreso no puede ser anterior a la de salida.");
-      return;
-    } else if (dep < new Date()) {
-      setDateError(
-        "La fecha de salida no puede ser anterior a la fecha actual."
-      );
-      return;
+    if (flightData.departureDate && dep < new Date()) {
+      errors.departureDate = "La fecha de salida no puede ser anterior a hoy.";
     }
-    sessionStorage.setItem("flightData", JSON.stringify(flightData));
+
+    if (flightData.returnDate && ret < dep) {
+      errors.returnDate =
+        "La fecha de regreso no puede ser anterior a la de salida.";
+    }
+
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const matchedFlight = availableFlights.find(
+      (f) =>
+        f.destination === flightData.destination &&
+        f.class === flightData.flightClass
+    );
+
+    const updatedFlightData = {
+      ...flightData,
+      priceUSD: matchedFlight?.priceUSD ?? 0,
+    };
+
+    sessionStorage.setItem("flightData", JSON.stringify(updatedFlightData));
     router.push("/reserva/paso-2");
   };
 
@@ -55,7 +86,7 @@ export default function Paso1() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center px-6 py-12 overflow-hidden"
+      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center overflow-hidden"
     >
       <div
         aria-hidden="true"
@@ -71,6 +102,8 @@ export default function Paso1() {
           returnDate={flightData.returnDate}
           flightClass={flightData.flightClass}
           onChange={handleChange}
+          fieldErrors={fieldErrors}
+          onFlightsLoaded={setAvailableFlights}
         />
 
         {dateError && (

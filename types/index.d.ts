@@ -2,7 +2,7 @@ export interface Flight {
   id: number;
   destination: string;
   class: "Económica" | "Ejecutiva" | "Primera";
-  price: number;
+  priceUSD: number;
 }
 
 export interface FlightData {
@@ -10,6 +10,7 @@ export interface FlightData {
   departureDate: string;
   returnDate: string;
   flightClass: string;
+  priceUSD: number;
 }
 
 export interface FlightFormProps {
@@ -37,6 +38,10 @@ export interface TravelerFormData {
 export interface TravelerFormProps {
   formData: TravelerFormData;
   setFormData: React.Dispatch<React.SetStateAction<TravelerFormData>>;
+  fieldErrors?: Record<
+    number,
+    Partial<Record<keyof TravelerFormData["travelers"][0], string>>
+  >;
 }
 
 export interface Traveler {

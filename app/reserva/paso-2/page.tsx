@@ -9,9 +9,7 @@ import { useRouter } from "next/navigation";
 export default function Paso2() {
   const [formData, setFormData] = useState<TravelerFormData>({
     numTravelers: 1,
-    travelers: [
-      { fullName: "", birthDate: "", idType: "Cédula", idNumber: "" },
-    ],
+    travelers: [{ fullName: "", birthDate: "", idType: "", idNumber: "" }],
     hasPets: false,
     petCount: 0,
     hasExtraLuggage: false,
@@ -19,6 +17,13 @@ export default function Paso2() {
   });
 
   const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<
+      number,
+      Partial<Record<keyof TravelerFormData["travelers"][0], string>>
+    >
+  >({});
+
   const router = useRouter();
 
   useEffect(() => {
@@ -29,36 +34,53 @@ export default function Paso2() {
     }
   }, [router]);
 
+  useEffect(() => {
+    sessionStorage.removeItem("travelerData");
+  }, []);
+
   const handleSave = () => {
     setFormError("");
+    const newErrors: typeof fieldErrors = {};
 
-    for (const [index, traveler] of formData.travelers.entries()) {
-      if (
-        !traveler.fullName.trim() ||
-        !traveler.birthDate.trim() ||
-        !traveler.idType.trim() ||
-        !traveler.idNumber.trim()
-      ) {
-        setFormError(
-          `Por favor, completa todos los campos del viajero ${index + 1}.`
-        );
-        return;
+    formData.travelers.forEach((traveler, index) => {
+      const travelerErrors: Partial<Record<keyof typeof traveler, string>> = {};
+
+      if (!traveler.fullName.trim()) {
+        travelerErrors.fullName = "El nombre es obligatorio.";
       }
 
-      // Validar que la fecha de nacimiento no sea futura
-      const birthDate = new Date(traveler.birthDate);
-      const today = new Date();
-      if (birthDate > today) {
-        setFormError(
-          `La fecha de nacimiento del viajero ${index + 1} no puede ser futura.`
-        );
-        return;
+      if (!traveler.birthDate.trim()) {
+        travelerErrors.birthDate = "La fecha de nacimiento es obligatoria.";
+      } else {
+        const birthDate = new Date(traveler.birthDate);
+        const today = new Date();
+        if (birthDate > today) {
+          travelerErrors.birthDate =
+            "La fecha de nacimiento no puede ser futura.";
+        }
       }
+
+      if (!traveler.idType.trim() || traveler.idType === "Seleccione") {
+        travelerErrors.idType = "Selecciona un tipo de documento.";
+      }
+
+      if (!traveler.idNumber.trim()) {
+        travelerErrors.idNumber = "El número de documento es obligatorio.";
+      }
+
+      if (Object.keys(travelerErrors).length > 0) {
+        newErrors[index] = travelerErrors;
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setFormError("Por favor, corrige los campos marcados.");
+      return;
     }
 
-    // Guardar en sessionStorage y navegar al siguiente paso
+    setFieldErrors({});
     sessionStorage.setItem("travelerData", JSON.stringify(formData));
-    alert("Datos guardados correctamente.");
     router.push("/reserva/paso-3");
   };
 
@@ -67,7 +89,7 @@ export default function Paso2() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center px-6 py-12 overflow-hidden"
+      className="relative min-h-screen bg-gradient-to-tr from-blue-50 via-purple-100 to-pink-50 flex flex-col items-center justify-center overflow-hidden"
     >
       <div
         aria-hidden="true"
@@ -80,6 +102,7 @@ export default function Paso2() {
         <TravelerForm
           formData={formData}
           setFormData={setFormData}
+          fieldErrors={fieldErrors}
         />
 
         {formError && (
