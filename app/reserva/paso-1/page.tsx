@@ -44,6 +44,7 @@ export default function Paso1() {
       setDateError(
         "La fecha de salida no puede ser anterior a la fecha actual."
       );
+      return;
     }
     sessionStorage.setItem("flightData", JSON.stringify(flightData));
     router.push("/reserva/paso-2");

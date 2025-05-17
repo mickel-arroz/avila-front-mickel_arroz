@@ -2,64 +2,56 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import TravelerForm from "@/components/TravelerForm";
-import type { TravelerFormData } from "@/types";
+import ServicesAdditionalForm from "@/components/ServicesAdditionalForm";
+import type { ServicesAdditionalFormData } from "@/types/servicesAdditional";
 import { useRouter } from "next/navigation";
 
-export default function Paso2() {
-  const [formData, setFormData] = useState<TravelerFormData>({
-    numTravelers: 1,
-    travelers: [
-      { fullName: "", birthDate: "", idType: "Cédula", idNumber: "" },
-    ],
-    hasPets: false,
-    petCount: 0,
-    hasExtraLuggage: false,
-    extraLuggageCount: 0,
+export default function Paso3() {
+  const [formData, setFormData] = useState<ServicesAdditionalFormData>({
+    travelInsurance: false,
+    preferredSeats: false,
+    specialAssistance: false,
+    assistanceNote: "",
   });
 
   const [formError, setFormError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("flightData");
-    if (!stored) {
-      alert("No se encontró información previa. Redirigiendo a Paso 1.");
+    const flightData = sessionStorage.getItem("flightData");
+    if (!flightData) {
+      alert(
+        "No se encontró información previa del vuelo. Redirigiendo a Paso 1."
+      );
       router.push("/reserva/paso-1");
+    }
+
+    const travelerData = sessionStorage.getItem("travelerData");
+    if (!travelerData) {
+      alert(
+        "No se encontró información previa de los pasajeros. Redirigiendo a Paso 2."
+      );
+      router.push("/reserva/paso-2");
     }
   }, [router]);
 
   const handleSave = () => {
     setFormError("");
 
-    for (const [index, traveler] of formData.travelers.entries()) {
-      if (
-        !traveler.fullName.trim() ||
-        !traveler.birthDate.trim() ||
-        !traveler.idType.trim() ||
-        !traveler.idNumber.trim()
-      ) {
-        setFormError(
-          `Por favor, completa todos los campos del viajero ${index + 1}.`
-        );
-        return;
-      }
-
-      // Validar que la fecha de nacimiento no sea futura
-      const birthDate = new Date(traveler.birthDate);
-      const today = new Date();
-      if (birthDate > today) {
-        setFormError(
-          `La fecha de nacimiento del viajero ${index + 1} no puede ser futura.`
-        );
-        return;
-      }
+    if (formData.specialAssistance && !formData.assistanceNote.trim()) {
+      setFormError("Por favor, escribe una nota para la asistencia especial.");
+      return;
+    }
+    if (formData.assistanceNote.length > 200) {
+      setFormError(
+        "La nota de asistencia especial no puede exceder 200 caracteres."
+      );
+      return;
     }
 
-    // Guardar en sessionStorage y navegar al siguiente paso
-    sessionStorage.setItem("travelerData", JSON.stringify(formData));
+    sessionStorage.setItem("servicesAdditionalData", JSON.stringify(formData));
     alert("Datos guardados correctamente.");
-    router.push("/reserva/paso-3");
+    // router.push("/reserva/paso-4");
   };
 
   return (
@@ -74,10 +66,11 @@ export default function Paso2() {
         className="absolute inset-0 -z-10 bg-gradient-radial from-purple-300 via-blue-200 to-pink-200 opacity-30 animate-[pulse_15s_ease-in-out_infinite]"
       />
       <div className="relative bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl max-w-3xl w-full p-12 border border-gray-200">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-6 text-center tracking-tight leading-tight">
-          Datos de los <span className="text-indigo-600">Viajeros</span>
+        <h1 className="text-3xl font-extrabold text-gray-900 mb-14 text-center tracking-tight leading-tight">
+          Servicios <span className="text-indigo-600">Adicionales</span>
         </h1>
-        <TravelerForm
+
+        <ServicesAdditionalForm
           formData={formData}
           setFormData={setFormData}
         />
