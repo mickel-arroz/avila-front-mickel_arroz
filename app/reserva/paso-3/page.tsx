@@ -68,7 +68,7 @@ export default function Paso3() {
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-gradient-radial from-purple-300 via-blue-200 to-pink-200 opacity-30 animate-[pulse_15s_ease-in-out_infinite]"
       />
-      <div className="relative bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl max-w-3xl w-full p-12 border border-gray-200">
+      <div className="relative bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl max-w-3xl w-full md:p-12 py-10 px-6 my-6 border border-gray-200">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-14 text-center tracking-tight leading-tight">
           Servicios <span className="text-indigo-600">Adicionales</span>
         </h1>

@@ -76,7 +76,7 @@ export default function Paso4() {
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-gradient-radial from-purple-300 via-blue-200 to-pink-200 opacity-30 animate-[pulse_15s_ease-in-out_infinite]"
       />
-      <div className="relative bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl max-w-3xl w-full px-12 py-8 border border-gray-200">
+      <div className="relative bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl max-w-3xl w-full px-4 md:px-12 py-8 my-4 border border-gray-200">
         {data ? (
           <>
             <ReservationSummary data={data} />

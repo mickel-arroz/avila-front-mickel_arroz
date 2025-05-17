@@ -134,8 +134,9 @@ export default function TravelerForm({
           </div>
 
           {/* Tipo y número de documento */}
-          <div className="flex gap-2">
-            <div className="w-1/3">
+          <div className="flex flex-col sm:flex-row gap-2">
+            {/* Tipo de documento */}
+            <div className="sm:w-1/3 w-full">
               <label className="block text-sm mb-1 text-gray-700">
                 Tipo de documento
               </label>
@@ -159,7 +160,8 @@ export default function TravelerForm({
               )}
             </div>
 
-            <div className="w-2/3">
+            {/* Número de documento */}
+            <div className="sm:w-2/3 w-full">
               <label className="block text-sm mb-1 text-gray-700">
                 Número de documento
               </label>
