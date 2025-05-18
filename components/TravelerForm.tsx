@@ -21,11 +21,24 @@ export default function TravelerForm({
         : "border-gray-300 focus:ring-2 focus:ring-indigo-500"
     }`;
 
+  // Función para validar que solo contiene letras, espacios y caracteres especiales
+  const validateName = (name: string) => {
+    return /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(name);
+  };
+
   const handleTravelerChange = (
     index: number,
     field: "fullName" | "birthDate" | "idType" | "idNumber",
     value: string
   ) => {
+    // Validación especial para el campo fullName
+    if (field === "fullName") {
+      // Si el valor no está vacío y no pasa la validación, no actualizamos
+      if (value && !validateName(value)) {
+        return;
+      }
+    }
+
     const updatedTravelers = [...formData.travelers];
     updatedTravelers[index] = { ...updatedTravelers[index], [field]: value };
     setFormData({ ...formData, travelers: updatedTravelers });
@@ -106,6 +119,8 @@ export default function TravelerForm({
               onChange={(e) =>
                 handleTravelerChange(i, "fullName", e.target.value)
               }
+              pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+"
+              title="Solo se permiten letras y espacios"
             />
             {fieldErrors?.[i]?.fullName && (
               <p className="text-sm text-red-600 mt-1">

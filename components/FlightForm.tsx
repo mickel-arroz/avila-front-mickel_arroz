@@ -5,6 +5,7 @@ import Select, { StylesConfig } from "react-select";
 import { fetchFlights } from "@/lib/api";
 import type { Flight, FlightFormProps } from "@/types";
 import dayjs from "dayjs";
+import { translateClass } from "@/lib/flightClassTranslations";
 
 type FlightField =
   | "destination"
@@ -124,7 +125,7 @@ export default function FlightForm({
         </label>
         <input
           type="date"
-          min={today}
+          min={departureDate || today}
           className={getInputClasses(fieldErrors?.returnDate !== undefined)}
           value={returnDate}
           onChange={(e) => onChange("returnDate", e.target.value)}
@@ -150,7 +151,7 @@ export default function FlightForm({
               key={i}
               value={cls}
             >
-              {cls}
+              {translateClass(cls)}
             </option>
           ))}
         </select>

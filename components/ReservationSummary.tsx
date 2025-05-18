@@ -1,5 +1,6 @@
 "use client";
 
+import { translateClass } from "@/lib/flightClassTranslations";
 import { ReservationSummaryData } from "@/types/reservationSummary";
 import dayjs from "dayjs";
 
@@ -43,7 +44,7 @@ export default function ReservationSummary({ data }: Props) {
             {dayjs(data.returnDate).format("DD/MM/YYYY")}
           </p>
           <p>
-            <strong>Clase de vuelo:</strong> {data.flightClass}
+            <strong>Clase de vuelo:</strong> {translateClass(data.flightClass)}
           </p>
           {/* Mascotas */}
           {typeof data?.petCount === "number" && data.petCount > 0 && (
