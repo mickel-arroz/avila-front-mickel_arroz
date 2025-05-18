@@ -2,6 +2,9 @@
   "name": "avila-front-mickel_arroz",
   "version": "0.1.0",
   "private": true,
+  "description": "Aplicación de reservas de viaje moderna y minimalista, construida con Next.js, TypeScript y Tailwind CSS.",
+  "author": "Mickel Arroz",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -26,5 +29,13 @@
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mickel-arroz/avila-front-mickel_arroz.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mickel-arroz/avila-front-mickel_arroz/issues"
+  },
+  "homepage": "https://avila-front-mickel-arroz.vercel.app"
 }

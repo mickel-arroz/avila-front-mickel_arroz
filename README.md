@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Globetrotter - README</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      color: #333;
+    }
+    h1, h2 {
+      color: #4f46e5;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    ul {
+      margin-left: 1.5rem;
+    }
+    a {
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
 
-## Getting Started
+  <h1>Globetrotter ✈️</h1>
+  <p><strong>Globetrotter</strong> es una aplicación de reservas de viajes desarrollada como parte de una prueba técnica de frontend. Su enfoque es ofrecer una experiencia intuitiva, moderna y responsive para que los usuarios puedan realizar reservas en varios pasos.</p>
 
-First, run the development server:
+  <h2>✨ Mini resumen</h2>
+  <ul>
+    <li>Formulario multistep con validaciones por paso</li>
+    <li>Cálculo dinámico del total de la reserva (boletos, mascotas, maletas)</li>
+    <li>Soporte para múltiples viajeros</li>
+    <li>Despliegue en Vercel</li>
+  </ul>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  <h2>🚀 Tecnologías utilizadas</h2>
+  <ul>
+    <li><a href="https://nextjs.org/" target="_blank">Next.js 15</a></li>
+    <li><a href="https://react.dev/" target="_blank">React 19</a></li>
+    <li><a href="https://www.typescriptlang.org/" target="_blank">TypeScript 5</a></li>
+    <li><a href="https://tailwindcss.com/" target="_blank">Tailwind CSS 4</a></li>
+    <li><a href="https://www.npmjs.com/package/canvas-confetti" target="_blank">Canvas Confetti</a> 🎉</li>
+  </ul>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  <h2>🛠️ Getting Started</h2>
+  <h3>Clonar repositorio</h3>
+  <pre><code>git clone https://github.com/mickel-arroz/avila-front-mickel_arroz
+cd avila-front-mickel_arroz</code></pre>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+  <h3>Instalar dependencias</h3>
+  <pre><code>npm install</code></pre>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  <h3>Ejecutar en modo desarrollo</h3>
+  <pre><code>npm run dev</code></pre>
 
-## Learn More
+  <p>Abre <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> en tu navegador para ver la aplicación.</p>
 
-To learn more about Next.js, take a look at the following resources:
+  <h2>🧪 Scripts disponibles</h2>
+  <ul>
+    <li><code>npm run dev</code> – Ejecuta el servidor en modo desarrollo con Turbopack</li>
+    <li><code>npm run build</code> – Compila la app para producción</li>
+    <li><code>npm run start</code> – Inicia el servidor en producción</li>
+    <li><code>npm run lint</code> – Ejecuta análisis de ESLint</li>
+  </ul>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  <h2>🖥️ Demo desplegada</h2>
+  <p>👉 <a href="https://avila-front-mickel-arroz.vercel.app/" target="_blank">https://avila-front-mickel-arroz.vercel.app/</a><br/>
+  </p>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  <h2>📄 Licencia</h2>
+  <p>Este proyecto está bajo la Licencia MIT. Consulta el archivo <code>LICENSE</code> para más información.</p>
 
-## Deploy on Vercel
+  <h2>🙏 Agradecimientos</h2>
+  <ul>
+    <li>A <a href="https://tailwindcss.com/" target="_blank">Tailwind Labs</a> por facilitar el desarrollo responsive</li>
+    <li>A quien propuso la prueba técnica por un reto desafiante y completo 💪</li>
+  </ul>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  <p><strong>Mickel Arroz © 2025</strong></p>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</body>
+</html>
