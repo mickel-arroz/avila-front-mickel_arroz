@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Select, { StylesConfig } from "react-select";
 import { fetchFlights } from "@/lib/api";
 import type { Flight, FlightFormProps } from "@/types";
+import dayjs from "dayjs";
 
 type FlightField =
   | "destination"
@@ -38,6 +39,8 @@ export default function FlightForm({
       })
       .catch(console.error);
   }, []);
+
+  const today = dayjs().format("YYYY-MM-DD");
 
   const uniqueDestinations = [...new Set(flights.map((f) => f.destination))];
   const uniqueClasses = [...new Set(flights.map((f) => f.class))];
@@ -102,6 +105,7 @@ export default function FlightForm({
         </label>
         <input
           type="date"
+          min={today}
           className={getInputClasses(fieldErrors?.departureDate !== undefined)}
           value={departureDate}
           onChange={(e) => onChange("departureDate", e.target.value)}
@@ -120,6 +124,7 @@ export default function FlightForm({
         </label>
         <input
           type="date"
+          min={today}
           className={getInputClasses(fieldErrors?.returnDate !== undefined)}
           value={returnDate}
           onChange={(e) => onChange("returnDate", e.target.value)}

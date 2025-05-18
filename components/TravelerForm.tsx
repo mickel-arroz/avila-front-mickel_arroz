@@ -1,6 +1,7 @@
 "use client";
 
 import { TravelerFormProps } from "@/types";
+import dayjs from "dayjs";
 import { ChangeEvent } from "react";
 
 export default function TravelerForm({
@@ -65,6 +66,8 @@ export default function TravelerForm({
     }
   };
 
+  const today = dayjs().format("YYYY-MM-DD");
+
   return (
     <form className="space-y-6">
       <div>
@@ -118,6 +121,8 @@ export default function TravelerForm({
             </label>
             <input
               type="date"
+              max={today}
+              min="1900-01-01"
               className={getInputClasses(
                 fieldErrors?.[i]?.birthDate !== undefined
               )}

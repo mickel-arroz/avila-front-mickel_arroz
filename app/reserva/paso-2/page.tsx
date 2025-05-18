@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import TravelerForm from "@/components/TravelerForm";
 import type { TravelerFormData } from "@/types";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 export default function Paso2() {
   const [formData, setFormData] = useState<TravelerFormData>({
@@ -56,9 +57,9 @@ export default function Paso2() {
       if (!traveler.birthDate.trim()) {
         travelerErrors.birthDate = "La fecha de nacimiento es obligatoria.";
       } else {
-        const birthDate = new Date(traveler.birthDate);
-        const today = new Date();
-        if (birthDate > today) {
+        const birthDate = dayjs(traveler.birthDate);
+        const today = dayjs();
+        if (birthDate.isAfter(today)) {
           travelerErrors.birthDate =
             "La fecha de nacimiento no puede ser futura.";
         }

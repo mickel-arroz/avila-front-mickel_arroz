@@ -1,6 +1,7 @@
 "use client";
 
 import { ReservationSummaryData } from "@/types/reservationSummary";
+import dayjs from "dayjs";
 
 interface Props {
   data: ReservationSummaryData;
@@ -8,13 +9,14 @@ interface Props {
 
 export default function ReservationSummary({ data }: Props) {
   const getAge = (birthDate: string) => {
-    const birth = new Date(birthDate);
-    const today = new Date();
-    const age = today.getFullYear() - birth.getFullYear();
-    return today <
-      new Date(today.getFullYear(), birth.getMonth(), birth.getDate())
-      ? age - 1
-      : age;
+    const birth = dayjs(birthDate);
+    const today = dayjs();
+    const age = today.diff(birth, "year");
+
+    // Verificar si ya pasó el cumpleaños este año
+    const hasHadBirthday = today.isAfter(birth.year(today.year()));
+
+    return hasHadBirthday ? age : age - 1;
   };
 
   const travelersCount = data.travelers.length;
@@ -36,7 +38,9 @@ export default function ReservationSummary({ data }: Props) {
             <strong>Destino:</strong> {data.destination}
           </p>
           <p>
-            <strong>Fechas:</strong> {data.departureDate} al {data.returnDate}
+            <strong>Fechas:</strong>{" "}
+            {dayjs(data.departureDate).format("DD/MM/YYYY")} al{" "}
+            {dayjs(data.returnDate).format("DD/MM/YYYY")}
           </p>
           <p>
             <strong>Clase de vuelo:</strong> {data.flightClass}

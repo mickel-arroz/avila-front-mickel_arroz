@@ -5,6 +5,7 @@ import FlightForm from "@/components/FlightForm";
 import { motion } from "framer-motion";
 import type { Flight, FlightData } from "@/types";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 export default function Paso1() {
   const [flightData, setFlightData] = useState<FlightData>({
@@ -55,14 +56,15 @@ export default function Paso1() {
     if (!flightData.flightClass.trim())
       errors.flightClass = "La clase de vuelo es obligatoria.";
 
-    const dep = new Date(flightData.departureDate);
-    const ret = new Date(flightData.returnDate);
+    const dep = dayjs(flightData.departureDate);
+    const ret = dayjs(flightData.returnDate);
+    const today = dayjs().startOf("day");
 
-    if (flightData.departureDate && dep <= new Date()) {
+    if (flightData.departureDate && dep.isBefore(today)) {
       errors.departureDate = "La fecha de salida no puede ser anterior a hoy.";
     }
 
-    if (flightData.returnDate && ret <= dep) {
+    if (flightData.returnDate && ret.isBefore(dep)) {
       errors.returnDate =
         "La fecha de regreso no puede ser anterior a la de salida.";
     }

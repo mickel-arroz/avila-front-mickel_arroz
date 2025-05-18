@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "canvas-confetti": "^1.9.3",
+    "dayjs": "^1.11.13",
     "framer-motion": "^12.12.1",
     "next": "15.3.2",
     "react": "^19.0.0",
