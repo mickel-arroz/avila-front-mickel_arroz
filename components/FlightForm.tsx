@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Select, { StylesConfig } from "react-select";
 import { fetchFlights } from "@/lib/api";
 import type { Flight, FlightFormProps } from "@/types";
 
@@ -14,6 +15,9 @@ interface Props extends FlightFormProps {
   fieldErrors?: Partial<Record<FlightField, string>>;
   onFlightsLoaded?: (flights: Flight[]) => void;
 }
+
+// Tipo para las opciones del Select
+type SelectOption = { label: string; value: string };
 
 export default function FlightForm({
   destination,
@@ -45,25 +49,46 @@ export default function FlightForm({
         : "border-gray-300 focus:ring-2 focus:ring-indigo-500"
     }`;
 
+  const selectStyles: StylesConfig<SelectOption, false> = {
+    control: (base, state) => ({
+      ...base,
+      borderRadius: "0.375rem", // rounded-md
+      borderColor: fieldErrors?.destination ? "#f87171" : "#d1d5db", // red-400 o gray-300
+      boxShadow: state.isFocused
+        ? `0 0 0 2px ${fieldErrors?.destination ? "#fecaca" : "#c7d2fe"}`
+        : "none", // red-200 o indigo-200
+      "&:hover": {
+        borderColor: fieldErrors?.destination ? "#f87171" : "#6366f1", // hover
+      },
+      padding: "0.15rem 0.25rem",
+      minHeight: "2.5rem",
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: 10,
+    }),
+  };
+
   return (
     <form className="space-y-6 max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
       {/* Destino */}
       <div>
-        <select
-          className={getInputClasses(!!fieldErrors?.destination)}
-          value={destination}
-          onChange={(e) => onChange("destination", e.target.value)}
-        >
-          <option value="">Selecciona un destino</option>
-          {uniqueDestinations.map((dest, i) => (
-            <option
-              key={i}
-              value={dest}
-            >
-              {dest}
-            </option>
-          ))}
-        </select>
+        <label className="block text-sm font-medium mb-1 text-gray-700">
+          Destino
+        </label>
+
+        <Select<SelectOption, false>
+          options={uniqueDestinations.map((d) => ({ value: d, label: d }))}
+          value={
+            destination ? { value: destination, label: destination } : null
+          }
+          onChange={(selectedOption) =>
+            onChange("destination", selectedOption?.value || "")
+          }
+          placeholder="Selecciona un destino"
+          styles={selectStyles}
+          isSearchable
+        />
 
         {fieldErrors?.destination && (
           <p className="text-sm text-red-600 mt-1">{fieldErrors.destination}</p>
