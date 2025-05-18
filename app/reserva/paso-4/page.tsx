@@ -6,11 +6,14 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import ReservationSummary from "@/components/ReservationSummary";
 import { ReservationSummaryData } from "@/types/reservationSummary";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import BackButton from "@/components/buttons/BackButton";
 
 export default function Paso4() {
   const router = useRouter();
   const [data, setData] = useState<ReservationSummaryData | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     try {
@@ -52,17 +55,20 @@ export default function Paso4() {
     }
   }, [router]);
 
-  const handleConfirm = () => {
-    confetti({
-      particleCount: 500,
-      spread: 100,
-      origin: { y: 0.8 },
-      zIndex: 9999,
-    });
-
-    setConfirmed(true);
-    // sessionStorage.clear();
-    // router.push("/"); // Redirige a inicio o gracias
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      confetti({
+        particleCount: 500,
+        spread: 100,
+        origin: { y: 0.8 },
+        zIndex: 9999,
+      });
+      setConfirmed(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -87,22 +93,15 @@ export default function Paso4() {
               </p>
             )}
 
-            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-6">
-              <button
-                onClick={() => router.push("/reserva/paso-3")}
-                type="button"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors shadow cursor-pointer"
-              >
-                Volver
-              </button>
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-5">
+              <BackButton onClick={() => router.push("/reserva/paso-3")} />
 
-              <button
+              <PrimaryButton
                 onClick={handleConfirm}
-                className="w-full sm:w-auto px-12 py-3 rounded-full font-semibold text-white shadow-lg transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
-                type="button"
-              >
-                Confirmar Reserva
-              </button>
+                isLoading={isLoading}
+                normalText="Confirmar Reserva"
+                disabled={confirmed}
+              />
             </div>
           </>
         ) : (

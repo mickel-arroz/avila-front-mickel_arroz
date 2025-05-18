@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import type { Flight, FlightData } from "@/types";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import BackButton from "@/components/buttons/BackButton";
 
 export default function Paso1() {
   const [flightData, setFlightData] = useState<FlightData>({
@@ -17,10 +19,9 @@ export default function Paso1() {
   });
 
   const router = useRouter();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [dateError, setDateError] = useState("");
   const [availableFlights, setAvailableFlights] = useState<Flight[]>([]);
-
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof FlightData, string>>
   >({});
@@ -43,7 +44,7 @@ export default function Paso1() {
     flightData.returnDate.trim() !== "" &&
     flightData.flightClass.trim() !== "";
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setDateError("");
     const errors: Partial<Record<keyof FlightData, string>> = {};
 
@@ -72,19 +73,28 @@ export default function Paso1() {
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
-    const matchedFlight = availableFlights.find(
-      (f) =>
-        f.destination === flightData.destination &&
-        f.class === flightData.flightClass
-    );
+    setIsLoading(true);
 
-    const updatedFlightData = {
-      ...flightData,
-      priceUSD: matchedFlight?.priceUSD ?? 0,
-    };
+    try {
+      // Simulación de procesamiento
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    sessionStorage.setItem("flightData", JSON.stringify(updatedFlightData));
-    router.push("/reserva/paso-2");
+      const matchedFlight = availableFlights.find(
+        (f) =>
+          f.destination === flightData.destination &&
+          f.class === flightData.flightClass
+      );
+
+      const updatedFlightData = {
+        ...flightData,
+        priceUSD: matchedFlight?.priceUSD ?? 0,
+      };
+
+      sessionStorage.setItem("flightData", JSON.stringify(updatedFlightData));
+      router.push("/reserva/paso-2");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -119,26 +129,15 @@ export default function Paso1() {
         )}
 
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-5">
-          <button
-            onClick={() => router.push("/")}
-            type="button"
-            className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors shadow cursor-pointer"
-          >
-            Volver
-          </button>
+          <BackButton />
 
-          <button
+          <PrimaryButton
             onClick={handleSave}
             disabled={!isFormValid}
-            className={`w-full sm:w-auto px-12 py-3 rounded-full font-semibold text-white shadow-lg transition-colors ${
-              isFormValid
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-            type="button"
-          >
-            Continuar
-          </button>
+            isLoading={isLoading}
+            normalText="Continuar"
+            className="w-full sm:w-auto"
+          ></PrimaryButton>
         </div>
       </div>
     </motion.section>

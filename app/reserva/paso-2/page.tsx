@@ -6,6 +6,8 @@ import TravelerForm from "@/components/TravelerForm";
 import type { TravelerFormData } from "@/types";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import BackButton from "@/components/buttons/BackButton";
 
 export default function Paso2() {
   const [formData, setFormData] = useState<TravelerFormData>({
@@ -18,6 +20,7 @@ export default function Paso2() {
   });
 
   const [formError, setFormError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<
     Record<
       number,
@@ -43,7 +46,7 @@ export default function Paso2() {
     }
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setFormError("");
     const newErrors: typeof fieldErrors = {};
 
@@ -84,9 +87,18 @@ export default function Paso2() {
       return;
     }
 
-    setFieldErrors({});
-    sessionStorage.setItem("travelerData", JSON.stringify(formData));
-    router.push("/reserva/paso-3");
+    setIsLoading(true);
+
+    try {
+      // Simulación de procesamiento
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setFieldErrors({});
+      sessionStorage.setItem("travelerData", JSON.stringify(formData));
+      router.push("/reserva/paso-3");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -117,21 +129,17 @@ export default function Paso2() {
         )}
 
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-6">
-          <button
-            onClick={() => router.push("/reserva/paso-1")}
-            type="button"
-            className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors shadow cursor-pointer"
-          >
-            Volver
-          </button>
+          <BackButton
+            href="/reserva/paso-1"
+            className="w-full sm:w-auto"
+          />
 
-          <button
+          <PrimaryButton
             onClick={handleSave}
-            className="w-full sm:w-auto px-12 py-3 rounded-full font-semibold text-white shadow-lg transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
-            type="button"
-          >
-            Continuar
-          </button>
+            isLoading={isLoading}
+            className="w-full sm:w-auto"
+            normalText="Continuar"
+          ></PrimaryButton>
         </div>
       </div>
     </motion.section>
