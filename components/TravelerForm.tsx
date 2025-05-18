@@ -51,15 +51,11 @@ export default function TravelerForm({
     const { name, value, type } = target;
     const checked = (target as HTMLInputElement).checked;
 
-    const val =
-      type === "checkbox"
-        ? checked
-        : type === "number"
-        ? parseInt(value)
-        : value;
-
     if (name === "numTravelers") {
-      const num = parseInt(value);
+      let num = parseInt(value);
+      // Forzar el rango entre 1 y 10
+      num = Math.max(1, Math.min(10, num || 1));
+
       const travelers = [...formData.travelers];
       if (num > travelers.length) {
         for (let i = travelers.length; i < num; i++) {
@@ -74,9 +70,34 @@ export default function TravelerForm({
         travelers.length = num;
       }
       setFormData({ ...formData, numTravelers: num, travelers });
-    } else {
-      setFormData({ ...formData, [name]: val });
+      return;
     }
+
+    if (name === "petCount" || name === "extraLuggageCount") {
+      // Asegurar que siempre sea al menos 1
+      const numValue = Math.max(1, parseInt(value) || 1);
+      setFormData({ ...formData, [name]: numValue });
+      return;
+    }
+
+    const val = type === "checkbox" ? checked : value;
+    setFormData({ ...formData, [name]: val });
+  };
+
+  const handlePetSelection = (hasPets: boolean) => {
+    setFormData({
+      ...formData,
+      hasPets,
+      petCount: hasPets ? 1 : 0, // 1 si es true, 0 si es false
+    });
+  };
+
+  const handleLuggageSelection = (hasExtraLuggage: boolean) => {
+    setFormData({
+      ...formData,
+      hasExtraLuggage,
+      extraLuggageCount: hasExtraLuggage ? 1 : 0, // 1 si es true, 0 si es false
+    });
   };
 
   const today = dayjs().format("YYYY-MM-DD");
@@ -85,7 +106,7 @@ export default function TravelerForm({
     <form className="space-y-6">
       <div>
         <label className="block text-sm font-medium mb-1 text-gray-700">
-          Número de viajeros
+          Número de viajeros (1-10)
         </label>
         <input
           type="number"
@@ -95,6 +116,13 @@ export default function TravelerForm({
           className={getInputClasses()}
           value={formData.numTravelers}
           onChange={handleChange}
+          onBlur={(e) => {
+            // Corregir si el usuario borra el valor
+            if (!e.target.value || parseInt(e.target.value) < 1) {
+              e.target.value = "1";
+              handleChange(e);
+            }
+          }}
         />
       </div>
 
@@ -217,7 +245,7 @@ export default function TravelerForm({
                 type="radio"
                 name="hasPets"
                 checked={formData.hasPets === true}
-                onChange={() => setFormData({ ...formData, hasPets: true })}
+                onChange={() => handlePetSelection(true)}
               />
               Sí
             </label>
@@ -226,9 +254,7 @@ export default function TravelerForm({
                 type="radio"
                 name="hasPets"
                 checked={formData.hasPets === false}
-                onChange={() =>
-                  setFormData({ ...formData, hasPets: false, petCount: 0 })
-                }
+                onChange={() => handlePetSelection(false)}
               />
               No
             </label>
@@ -245,6 +271,12 @@ export default function TravelerForm({
                 className={getInputClasses()}
                 value={formData.petCount}
                 onChange={handleChange}
+                onBlur={(e) => {
+                  if (!e.target.value || parseInt(e.target.value) < 1) {
+                    e.target.value = "1";
+                    handleChange(e);
+                  }
+                }}
               />
               <p className="text-xs text-gray-500 mt-1">Costo: $100 c/u</p>
             </div>
@@ -262,9 +294,7 @@ export default function TravelerForm({
                 type="radio"
                 name="hasExtraLuggage"
                 checked={formData.hasExtraLuggage === true}
-                onChange={() =>
-                  setFormData({ ...formData, hasExtraLuggage: true })
-                }
+                onChange={() => handleLuggageSelection(true)}
               />
               Sí
             </label>
@@ -273,13 +303,7 @@ export default function TravelerForm({
                 type="radio"
                 name="hasExtraLuggage"
                 checked={formData.hasExtraLuggage === false}
-                onChange={() =>
-                  setFormData({
-                    ...formData,
-                    hasExtraLuggage: false,
-                    extraLuggageCount: 0,
-                  })
-                }
+                onChange={() => handleLuggageSelection(false)}
               />
               No
             </label>
@@ -296,6 +320,12 @@ export default function TravelerForm({
                 className={getInputClasses()}
                 value={formData.extraLuggageCount}
                 onChange={handleChange}
+                onBlur={(e) => {
+                  if (!e.target.value || parseInt(e.target.value) < 1) {
+                    e.target.value = "1";
+                    handleChange(e);
+                  }
+                }}
               />
               <p className="text-xs text-gray-500 mt-1">Costo: $50 c/u</p>
             </div>
