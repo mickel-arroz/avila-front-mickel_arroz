@@ -36,7 +36,11 @@ export default function Paso3() {
   }, [router]);
 
   useEffect(() => {
-    sessionStorage.removeItem("servicesAdditionalData");
+    const stored = sessionStorage.getItem("servicesAdditionalData");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setFormData(parsed);
+    }
   }, []);
 
   const handleSave = () => {
@@ -84,13 +88,23 @@ export default function Paso3() {
           </p>
         )}
 
-        <button
-          onClick={handleSave}
-          className="mt-8 w-full py-3 rounded-full font-semibold text-white shadow-lg transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
-          type="button"
-        >
-          Continuar
-        </button>
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-6">
+          <button
+            onClick={() => router.push("/reserva/paso-2")}
+            type="button"
+            className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors shadow cursor-pointer"
+          >
+            Volver
+          </button>
+
+          <button
+            onClick={handleSave}
+            className="w-full sm:w-auto px-12 py-3 rounded-full font-semibold text-white shadow-lg transition-colors bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
+            type="button"
+          >
+            Continuar
+          </button>
+        </div>
       </div>
     </motion.section>
   );

@@ -25,7 +25,11 @@ export default function Paso1() {
   >({});
 
   useEffect(() => {
-    sessionStorage.removeItem("flightData");
+    const stored = sessionStorage.getItem("flightData");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setFlightData(parsed);
+    }
   }, []);
 
   const handleChange = (field: keyof FlightData, value: string) => {
@@ -54,11 +58,11 @@ export default function Paso1() {
     const dep = new Date(flightData.departureDate);
     const ret = new Date(flightData.returnDate);
 
-    if (flightData.departureDate && dep < new Date()) {
+    if (flightData.departureDate && dep <= new Date()) {
       errors.departureDate = "La fecha de salida no puede ser anterior a hoy.";
     }
 
-    if (flightData.returnDate && ret < dep) {
+    if (flightData.returnDate && ret <= dep) {
       errors.returnDate =
         "La fecha de regreso no puede ser anterior a la de salida.";
     }
@@ -112,18 +116,28 @@ export default function Paso1() {
           </p>
         )}
 
-        <button
-          onClick={handleSave}
-          disabled={!isFormValid}
-          className={`mt-8 w-full py-3 rounded-full font-semibold text-white shadow-lg transition-colors ${
-            isFormValid
-              ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-          type="button"
-        >
-          Continuar
-        </button>
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-5">
+          <button
+            onClick={() => router.push("/")}
+            type="button"
+            className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors shadow cursor-pointer"
+          >
+            Volver
+          </button>
+
+          <button
+            onClick={handleSave}
+            disabled={!isFormValid}
+            className={`w-full sm:w-auto px-12 py-3 rounded-full font-semibold text-white shadow-lg transition-colors ${
+              isFormValid
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+            type="button"
+          >
+            Continuar
+          </button>
+        </div>
       </div>
     </motion.section>
   );
