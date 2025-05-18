@@ -3,38 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Globetrotter - README</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      line-height: 1.6;
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
-      color: #333;
-    }
-    h1, h2 {
-      color: #4f46e5;
-    }
-    code {
-      background: #f3f4f6;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-    }
-    pre {
-      background: #f3f4f6;
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-    ul {
-      margin-left: 1.5rem;
-    }
-    a {
-      color: #2563eb;
-    }
-  </style>
+
 </head>
 <body>
 
@@ -89,7 +58,7 @@ cd avila-front-mickel_arroz</code></pre>
   <h2>🙏 Agradecimientos</h2>
   <ul>
     <li>A <a href="https://tailwindcss.com/" target="_blank">Tailwind Labs</a> por facilitar el desarrollo responsive</li>
-    <li>A quien propuso la prueba técnica por un reto desafiante y completo 💪</li>
+    <li>A Avila Tek que propuso la prueba técnica, por un reto desafiante y completo 💪</li>
   </ul>
 
   <p><strong>Mickel Arroz © 2025</strong></p>
