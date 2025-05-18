@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FlightForm from "@/components/FlightForm";
 import { motion } from "framer-motion";
 import type { Flight, FlightData } from "@/types";
@@ -20,6 +20,7 @@ export default function Paso1() {
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [dateError, setDateError] = useState("");
   const [availableFlights, setAvailableFlights] = useState<Flight[]>([]);
   const [fieldErrors, setFieldErrors] = useState<
@@ -32,6 +33,16 @@ export default function Paso1() {
       const parsed = JSON.parse(stored);
       setFlightData(parsed);
     }
+  }, []);
+
+  const handleFlightsLoaded = useCallback((flights: Flight[]) => {
+    setAvailableFlights(flights);
+    setFetchError(null);
+  }, []);
+
+  const handleFetchError = useCallback((error: string) => {
+    console.error("Error en FlightForm:", error);
+    setFetchError(error);
   }, []);
 
   const handleChange = (field: keyof FlightData, value: string) => {
@@ -75,26 +86,23 @@ export default function Paso1() {
 
     setIsLoading(true);
 
-    try {
-      // Simulación de procesamiento
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Simulación de procesamiento
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const matchedFlight = availableFlights.find(
-        (f) =>
-          f.destination === flightData.destination &&
-          f.class === flightData.flightClass
-      );
+    const matchedFlight = availableFlights.find(
+      (f) =>
+        f.destination === flightData.destination &&
+        f.class === flightData.flightClass
+    );
 
-      const updatedFlightData = {
-        ...flightData,
-        priceUSD: matchedFlight?.priceUSD ?? 0,
-      };
+    const updatedFlightData = {
+      ...flightData,
+      priceUSD: matchedFlight?.priceUSD ?? 0,
+    };
 
-      sessionStorage.setItem("flightData", JSON.stringify(updatedFlightData));
-      router.push("/reserva/paso-2");
-    } finally {
-      setIsLoading(false);
-    }
+    sessionStorage.setItem("flightData", JSON.stringify(updatedFlightData));
+    router.push("/reserva/paso-2");
+    setIsLoading(false);
   };
 
   return (
@@ -112,6 +120,36 @@ export default function Paso1() {
         <h1 className="text-3xl font-extrabold text-gray-900 mb-6 text-center tracking-tight leading-tight">
           Información del <span className="text-indigo-600">Viaje</span>
         </h1>
+        {fetchError && (
+          <div className="mb-6 bg-red-50 border-1 border-l-4 border-red-200 border-l-red-500 p-4 rounded-md">
+            <div className="flex items-start gap-3">
+              <svg
+                className="h-5 w-5 text-red-500 mt-1"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div>
+                <h3 className="text-sm font-medium text-red-800">
+                  Error al cargar los vuelos
+                </h3>
+                <p className="text-sm text-red-700 mt-1">{fetchError}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-2 text-sm text-red-600 font-semibold cursor-pointer hover:underline"
+                >
+                  Reintentar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <FlightForm
           destination={flightData.destination}
           departureDate={flightData.departureDate}
@@ -119,7 +157,8 @@ export default function Paso1() {
           flightClass={flightData.flightClass}
           onChange={handleChange}
           fieldErrors={fieldErrors}
-          onFlightsLoaded={setAvailableFlights}
+          onFlightsLoaded={handleFlightsLoaded}
+          onFetchError={handleFetchError}
         />
 
         {dateError && (
@@ -133,7 +172,7 @@ export default function Paso1() {
 
           <PrimaryButton
             onClick={handleSave}
-            disabled={!isFormValid}
+            disabled={!isFormValid || !!fetchError}
             isLoading={isLoading}
             normalText="Continuar"
             className="w-full sm:w-auto"

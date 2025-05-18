@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Select, { StylesConfig } from "react-select";
 import { fetchFlights } from "@/lib/api";
 import type { Flight, FlightFormProps } from "@/types";
@@ -16,6 +16,7 @@ type FlightField =
 interface Props extends FlightFormProps {
   fieldErrors?: Partial<Record<FlightField, string>>;
   onFlightsLoaded?: (flights: Flight[]) => void;
+  onFetchError?: (error: string) => void;
 }
 
 // Tipo para las opciones del Select
@@ -29,17 +30,34 @@ export default function FlightForm({
   onChange,
   fieldErrors,
   onFlightsLoaded,
+  onFetchError,
 }: Props) {
   const [flights, setFlights] = useState<Flight[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const loadFlights = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setFetchError(null);
+
+      const data = await fetchFlights();
+      setFlights(data);
+      onFlightsLoaded?.(data);
+    } catch (error) {
+      console.error("Error loading flights:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
+      setFetchError(errorMessage);
+      onFetchError?.(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onFlightsLoaded, onFetchError]);
 
   useEffect(() => {
-    fetchFlights()
-      .then((data) => {
-        setFlights(data);
-        onFlightsLoaded?.(data);
-      })
-      .catch(console.error);
-  }, []);
+    loadFlights();
+  }, [loadFlights]);
 
   const today = dayjs().format("YYYY-MM-DD");
 
@@ -75,90 +93,110 @@ export default function FlightForm({
 
   return (
     <form className="space-y-6 max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
-      {/* Destino */}
-      <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">
-          Destino
-        </label>
+      {isLoading && (
+        <div className="text-center py-4">
+          <p className="text-indigo-600">Cargando vuelos disponibles...</p>
+        </div>
+      )}
 
-        <Select<SelectOption, false>
-          options={uniqueDestinations.map((d) => ({ value: d, label: d }))}
-          value={
-            destination ? { value: destination, label: destination } : null
-          }
-          onChange={(selectedOption) =>
-            onChange("destination", selectedOption?.value || "")
-          }
-          placeholder="Selecciona un destino"
-          styles={selectStyles}
-          isSearchable
-        />
+      {!isLoading && !fetchError && (
+        <>
+          {/* Destino */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Destino
+            </label>
 
-        {fieldErrors?.destination && (
-          <p className="text-sm text-red-600 mt-1">{fieldErrors.destination}</p>
-        )}
-      </div>
+            <Select<SelectOption, false>
+              options={uniqueDestinations.map((d) => ({ value: d, label: d }))}
+              value={
+                destination ? { value: destination, label: destination } : null
+              }
+              onChange={(selectedOption) =>
+                onChange("destination", selectedOption?.value || "")
+              }
+              placeholder="Selecciona un destino"
+              styles={selectStyles}
+              isSearchable
+            />
 
-      {/* Fecha de salida */}
-      <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">
-          Fecha de salida
-        </label>
-        <input
-          type="date"
-          min={today}
-          className={getInputClasses(fieldErrors?.departureDate !== undefined)}
-          value={departureDate}
-          onChange={(e) => onChange("departureDate", e.target.value)}
-        />
-        {fieldErrors?.departureDate && (
-          <p className="text-sm text-red-600 mt-1">
-            {fieldErrors.departureDate}
-          </p>
-        )}
-      </div>
+            {fieldErrors?.destination && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors.destination}
+              </p>
+            )}
+          </div>
 
-      {/* Fecha de regreso */}
-      <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">
-          Fecha de regreso
-        </label>
-        <input
-          type="date"
-          min={departureDate || today}
-          className={getInputClasses(fieldErrors?.returnDate !== undefined)}
-          value={returnDate}
-          onChange={(e) => onChange("returnDate", e.target.value)}
-        />
-        {fieldErrors?.returnDate && (
-          <p className="text-sm text-red-600 mt-1">{fieldErrors.returnDate}</p>
-        )}
-      </div>
+          {/* Fecha de salida */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Fecha de salida
+            </label>
+            <input
+              type="date"
+              min={today}
+              className={getInputClasses(
+                fieldErrors?.departureDate !== undefined
+              )}
+              value={departureDate}
+              onChange={(e) => onChange("departureDate", e.target.value)}
+            />
+            {fieldErrors?.departureDate && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors.departureDate}
+              </p>
+            )}
+          </div>
 
-      {/* Clase de vuelo */}
-      <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">
-          Clase de vuelo
-        </label>
-        <select
-          className={getInputClasses(fieldErrors?.flightClass !== undefined)}
-          value={flightClass}
-          onChange={(e) => onChange("flightClass", e.target.value)}
-        >
-          <option value="">Selecciona una clase</option>
-          {uniqueClasses.map((cls, i) => (
-            <option
-              key={i}
-              value={cls}
+          {/* Fecha de regreso */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Fecha de regreso
+            </label>
+            <input
+              type="date"
+              min={departureDate || today}
+              className={getInputClasses(fieldErrors?.returnDate !== undefined)}
+              value={returnDate}
+              onChange={(e) => onChange("returnDate", e.target.value)}
+            />
+            {fieldErrors?.returnDate && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors.returnDate}
+              </p>
+            )}
+          </div>
+
+          {/* Clase de vuelo */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Clase de vuelo
+            </label>
+            <select
+              className={getInputClasses(
+                fieldErrors?.flightClass !== undefined
+              )}
+              value={flightClass}
+              onChange={(e) => onChange("flightClass", e.target.value)}
             >
-              {translateClass(cls)}
-            </option>
-          ))}
-        </select>
-        {fieldErrors?.flightClass && (
-          <p className="text-sm text-red-600 mt-1">{fieldErrors.flightClass}</p>
-        )}
-      </div>
+              <option value="">Selecciona una clase</option>
+              {uniqueClasses.map((cls, i) => (
+                <option
+                  key={i}
+                  value={cls}
+                >
+                  {translateClass(cls)}
+                </option>
+              ))}
+            </select>
+            {fieldErrors?.flightClass && (
+              <p className="text-sm text-red-600 mt-1">
+                {fieldErrors.flightClass}
+              </p>
+            )}
+          </div>
+        </>
+      )}
     </form>
   );
 }
